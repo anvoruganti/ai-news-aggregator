@@ -16,4 +16,10 @@ dependencies = [
     "youtube-transcript-api>=0.6.0",
     "pydantic>=2.0.0",
     "playwright>=1.40.0",
-    "doc
+    "docling>=2.67.0",
+]
+
+[dependency-groups]
+dev = [
+    "ipykernel>=7.1.0",
+]
