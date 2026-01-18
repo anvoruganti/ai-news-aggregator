@@ -6,6 +6,7 @@ from typing import List, Dict, Any
 from app.scrapers.youtube import YouTubeScraper, ChannelVideo
 from app.scrapers.anthropic import AnthropicScraper, AnthropicArticle
 from app.scrapers.openai import OpenAIScraper, OpenAIArticle
+from app.scrapers.forwardfuture import ForwardFutureScraper, ForwardFutureArticle
 from config.youtube_channels import YOUTUBE_CHANNELS
 
 
@@ -23,6 +24,7 @@ class NewsAggregator:
         self.youtube_scraper = YouTubeScraper()
         self.anthropic_scraper = AnthropicScraper()
         self.openai_scraper = OpenAIScraper()
+        self.forwardfuture_scraper = ForwardFutureScraper()
     
     def collect_all_content(self) -> Dict[str, Any]:
         """
@@ -34,6 +36,7 @@ class NewsAggregator:
                 'youtube_videos': List[ChannelVideo],
                 'anthropic_articles': List[AnthropicArticle],
                 'openai_articles': List[OpenAIArticle],
+                'forwardfuture_articles': List[ForwardFutureArticle],
                 'timestamp': datetime
             }
         """
@@ -43,6 +46,7 @@ class NewsAggregator:
             'youtube_videos': [],
             'anthropic_articles': [],
             'openai_articles': [],
+            'forwardfuture_articles': [],
             'timestamp': datetime.now(),
         }
         
@@ -81,17 +85,28 @@ class NewsAggregator:
         except Exception as e:
             print(f"  ✗ Error fetching OpenAI articles: {e}")
         
+        # Collect ForwardFuture articles
+        print("\nFetching ForwardFuture articles...")
+        try:
+            forwardfuture_articles = self.forwardfuture_scraper.get_articles(hours=self.hours)
+            results['forwardfuture_articles'] = forwardfuture_articles
+            print(f"  ✓ Found {len(forwardfuture_articles)} ForwardFuture articles")
+        except Exception as e:
+            print(f"  ✗ Error fetching ForwardFuture articles: {e}")
+        
         # Summary
         total_items = (
             len(results['youtube_videos']) +
             len(results['anthropic_articles']) +
-            len(results['openai_articles'])
+            len(results['openai_articles']) +
+            len(results['forwardfuture_articles'])
         )
         print(f"\n{'='*60}")
         print(f"Total items collected: {total_items}")
         print(f"  - YouTube videos: {len(results['youtube_videos'])}")
         print(f"  - Anthropic articles: {len(results['anthropic_articles'])}")
         print(f"  - OpenAI articles: {len(results['openai_articles'])}")
+        print(f"  - ForwardFuture articles: {len(results['forwardfuture_articles'])}")
         print(f"{'='*60}")
         
         return results
@@ -133,4 +148,9 @@ if __name__ == "__main__":
     if results['openai_articles']:
         print(f"\nOpenAI Articles ({len(results['openai_articles'])}):")
         for article in results['openai_articles'][:3]:
+            print(f"  - {article.title}")
+    
+    if results['forwardfuture_articles']:
+        print(f"\nForwardFuture Articles ({len(results['forwardfuture_articles'])}):")
+        for article in results['forwardfuture_articles'][:3]:
             print(f"  - {article.title}")
