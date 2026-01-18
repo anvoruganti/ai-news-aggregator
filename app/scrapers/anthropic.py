@@ -6,8 +6,13 @@ from typing import List, Optional
 import feedparser  # pyright: ignore[reportMissingImports]
 import requests  # pyright: ignore[reportMissingImports,reportMissingModuleSource]
 from pydantic import BaseModel, Field  # pyright: ignore[reportMissingImports]
-from docling.document_converter import DocumentConverter
-DOCLING_AVAILABLE = True
+
+try:
+    from docling.document_converter import DocumentConverter  # pyright: ignore[reportMissingImports]
+    DOCLING_AVAILABLE = True
+except ImportError:
+    DOCLING_AVAILABLE = False
+    DocumentConverter = None  # type: ignore
 
 class AnthropicArticle(BaseModel):
     """Model for Anthropic blog article."""

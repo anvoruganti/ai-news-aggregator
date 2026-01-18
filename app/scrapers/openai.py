@@ -130,9 +130,10 @@ class OpenAIScraper:
 
 if __name__ == "__main__":
     scraper = OpenAIScraper()
-    articles = scraper.get_articles(hours=100)
+    hours_param = 48
+    articles = scraper.get_articles(hours=hours_param)
     
-    print(f"Found {len(articles)} articles in last 24 hours:\n")
+    print(f"Found {len(articles)} articles in last {hours_param} hours:\n")
     for article in articles:
         print(f"Title: {article.title}")
         print(f"URL: {article.url}")
